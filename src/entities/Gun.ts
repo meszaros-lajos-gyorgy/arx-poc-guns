@@ -21,24 +21,13 @@ export class Gun extends Entity {
         filename: 'gun.ftl',
         originIdx: 0,
         actionPoints: [
-          {
-            name: 'PRIMARY_ATTACH',
-            vertexIdx: 200,
-            action: -1,
-            sfx: -1,
-          },
-          {
-            name: 'HIT_30',
-            vertexIdx: 0,
-            action: -1,
-            sfx: -1,
-          },
-          {
-            name: 'HIT_15',
-            vertexIdx: 100,
-            action: -1,
-            sfx: 0,
-          },
+          { name: 'primary_attach', vertexIdx: 200, action: -1, sfx: -1 },
+          // { name: 'hit_30', vertexIdx: 0, action: -1, sfx: -1 },
+          // { name: 'hit_15', vertexIdx: 100, action: -1, sfx: 0 },
+          { name: 'carry_attach', vertexIdx: 0, action: -1, sfx: -1 },
+          { name: 'top', vertexIdx: 100, action: -1, sfx: -1 },
+          { name: 'bottom', vertexIdx: 250, action: -1, sfx: -1 },
+          { name: 'test', vertexIdx: 250, action: -1, sfx: -1 },
         ],
       }),
       otherDependencies: [
@@ -61,14 +50,22 @@ export class Gun extends Entity {
         Material.weapon,
         StackSize.unstackable,
         `
+          SET_MATERIAL METAL
           SET_WEAPON_MATERIAL SWORD
-          SET_STRIKE_SPEECH [player_strike_small]
+
+          // bow:
           SETOBJECTTYPE WEAPON
-          SETOBJECTTYPE 1H
-          SET_GROUP "BLADE"
-          SET_GROUP ARMORY
-          SETEQUIP DAMAGES 4
-          SETEQUIP aim_time 800
+          SETOBJECTTYPE BOW
+          SETEQUIP DAMAGES 1
+          SETEQUIP aim_time 0
+
+          // sword:
+          // SET_STRIKE_SPEECH [player_strike_small]
+          // SETOBJECTTYPE 1H
+          // SET_GROUP "BLADE"
+          // SET_GROUP ARMORY
+          // SETEQUIP DAMAGES 1
+          // SETEQUIP aim_time 0
         `,
       ]
     })
@@ -95,7 +92,10 @@ export class Gun extends Entity {
       }
 
       return `
-        IF (^FIGHTING == 1) ACCEPT
+        IF (^FIGHTING == 1) {
+          ACCEPT
+        }
+
         EQUIP PLAYER
       `
     })
