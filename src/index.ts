@@ -91,15 +91,15 @@ map.hud.hide(HudElements.Minimap)
 
 // ---------------------------
 
-// const meshes = [...ak47]
-// meshes.forEach((mesh) => {
-//   applyTransformations(mesh)
-//   mesh.translateX(map.config.offset.x)
-//   mesh.translateY(map.config.offset.y)
-//   mesh.translateZ(map.config.offset.z)
-//   applyTransformations(mesh)
-//   map.polygons.addThreeJsMesh(mesh, { tryToQuadify: DONT_QUADIFY, shading: SHADING_SMOOTH })
-// })
+const meshes = [...ak47]
+meshes.forEach((mesh) => {
+  applyTransformations(mesh)
+  mesh.translateX(map.config.offset.x - 200)
+  mesh.translateY(map.config.offset.y - 50)
+  mesh.translateZ(map.config.offset.z)
+  applyTransformations(mesh)
+  map.polygons.addThreeJsMesh(mesh, { tryToQuadify: DONT_QUADIFY, shading: SHADING_SMOOTH })
+})
 
 // ---------------------------
 
