@@ -8,7 +8,6 @@ export const ak47 = await loadOBJ('./ak47/ak47', {
   // TODO: scaleUV doesn't work when mesh is given to EntityModel
   // scaleUV: new Vector2(1, -1),
   materialFlags: ArxPolygonFlags.None,
-  reversedPolygonWinding: true,
   orientation: new Rotation(0, 0, MathUtils.degToRad(60)),
 })
 

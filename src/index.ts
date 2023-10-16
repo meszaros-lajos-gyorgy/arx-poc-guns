@@ -6,6 +6,7 @@ import {
   Rotation,
   SHADING_SMOOTH,
   Settings,
+  Texture,
   Vector3,
 } from 'arx-level-generator'
 import { loadRooms } from 'arx-level-generator/prefabs/rooms'
@@ -18,49 +19,54 @@ import { ak47 } from '@/models.js'
 
 const settings = new Settings()
 
-//const map = new ArxMap()
-const map = await ArxMap.fromOriginalLevel(11, settings)
-const indexOfShany = map.entities.findIndex((entity) => entity.ref === 'human_base_0094')
-const oldShany = map.entities[indexOfShany]
-const newShany = new Shany({
-  position: oldShany.position,
-  orientation: oldShany.orientation,
-})
-newShany.script?.on('grow', () => {
-  return `
-    set @new_scale ^#param1
-    mul @new_scale 100
-    setscale @new_scale
-  `
-})
-map.entities[indexOfShany] = newShany
+const map = new ArxMap()
+map.config.offset = new Vector3(6000, 0, 6000)
+map.player.position.adjustToPlayerHeight()
 
-const fountainPos = new Vector3(11182 - 5250 + 250, 1388 - 1055 + 50, 6826 - 4350 + 50 + 300)
+// -----------------
 
-const fountainZone = createZone({
-  name: 'fountain_zone',
-  position: fountainPos,
-  size: new Vector3(300, Infinity, 300),
-})
-map.zones.push(fountainZone)
+// const map = await ArxMap.fromOriginalLevel(11, settings)
+// const indexOfShany = map.entities.findIndex((entity) => entity.ref === 'human_base_0094')
+// const oldShany = map.entities[indexOfShany]
+// const newShany = new Shany({
+//   position: oldShany.position,
+//   orientation: oldShany.orientation,
+// })
+// newShany.script?.on('grow', () => {
+//   return `
+//     set @new_scale ^#param1
+//     mul @new_scale 100
+//     setscale @new_scale
+//   `
+// })
+// map.entities[indexOfShany] = newShany
 
-const fountain = new Entity({
-  src: 'fix_inter/fountain_youth',
-  position: fountainPos,
-})
-fountain.withScript()
-fountain.script?.properties.push(new ControlZone(fountainZone))
-fountain.script?.on('controlledzone_enter', () => {
-  return `
-    if (^$param1 == "human_base_0094") {
-      sendevent grow human_base_0094 5.0
-    }
-  `
-})
-map.entities.push(fountain)
+// const fountainPos = new Vector3(11182 - 5250 + 250, 1388 - 1055 + 50, 6826 - 4350 + 50 + 300)
 
-// map.config.offset = new Vector3(6000, 0, 6000)
-// map.player.position.adjustToPlayerHeight()
+// const fountainZone = createZone({
+//   name: 'fountain_zone',
+//   position: fountainPos,
+//   size: new Vector3(300, Infinity, 300),
+// })
+// map.zones.push(fountainZone)
+
+// const fountain = new Entity({
+//   src: 'fix_inter/fountain_youth',
+//   position: fountainPos,
+// })
+// fountain.withScript()
+// fountain.script?.properties.push(new ControlZone(fountainZone))
+// fountain.script?.on('controlledzone_enter', () => {
+//   return `
+//     if (^$param1 == "human_base_0094") {
+//       sendevent grow human_base_0094 5.0
+//     }
+//   `
+// })
+// map.entities.push(fountain)
+
+// -----------------
+
 map.player.withScript()
 map.player.script?.properties.push(new Speed(1.5))
 map.player.script?.on('init', () => {
@@ -97,8 +103,21 @@ map.hud.hide(HudElements.Minimap)
 
 // ---------------------------
 
+const curseHolder = Entity.marker.withScript().at({ position: new Vector3(0, -200, 0) })
+curseHolder.script?.on('game_ready', () => {
+  return `
+    spellcast -fxd -1 4 curse self
+  `
+})
+map.entities.push(curseHolder)
+
+// ---------------------------
+
 const rootGun = new Gun()
 rootGun.script?.makeIntoRoot()
+if (settings.mode === 'production') {
+  rootGun.script?.on('initend', () => `activatephysics`)
+}
 map.entities.push(rootGun)
 
 const gun = new Gun({
